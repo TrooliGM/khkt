@@ -12,7 +12,7 @@ async def run(tab):
         for method in ('Runtime.enable','Page.enable','Network.enable'):await b.call(method)
         await b.call('Page.bringToFront');await b.call('Emulation.setFocusEmulationEnabled',{'enabled':True})
         await b.call('Fetch.enable',{'patterns':[{'urlPattern':origin+path} for origin in (O,'http://127.0.0.1:8079') for path in ('/assets/firebase-client.js*','/api/auth/*','/api/ai/*')]})
-        for width in (320,360,390,412,1440):
+        for width in (320,360,390,412,1280,1440):
             mobile=width<760;height=844 if mobile else 1000
             await b.call('Emulation.setDeviceMetricsOverride',{'width':width,'height':height,'deviceScaleFactor':1,'mobile':mobile})
             await b.call('Emulation.setTouchEmulationEnabled',{'enabled':mobile})
@@ -52,8 +52,8 @@ async def run(tab):
                 await b.call('Input.dispatchTouchEvent',{'type':'touchEnd','touchPoints':[]})
                 await b.wait("document.querySelectorAll('[data-mobile-group]').length===12")
             else:
-                await b.wait('document.querySelectorAll(".story-card").length===12')
-                await b.evaluate("document.querySelector('.story-card-main').scrollIntoView({block:'center'});document.querySelector('.story-card-main').focus({preventScroll:true})")
+                await b.click('[data-mobile-group]');await b.wait('document.querySelectorAll(".story-card").length>0')
+                await b.evaluate("document.querySelector('.mobile-video-cover').scrollIntoView({block:'center'});document.querySelector('.mobile-video-cover').focus({preventScroll:true})")
                 assert await b.evaluate("getComputedStyle(document.activeElement).outlineStyle!=='none'")
                 rect=await b.evaluate("(()=>{const r=document.querySelector('.story-card').getBoundingClientRect();return {x:r.x+20,y:r.y+20,width:r.width,height:r.height}})()")
                 await b.call('Input.dispatchMouseEvent',{'type':'mouseMoved','x':rect['x'],'y':rect['y']});await asyncio.sleep(.2)
@@ -85,7 +85,7 @@ async def run(tab):
         assert not b.errors;report.update(status='PASS',js_errors=0)
 
 def main():
-    proc=subprocess.Popen(['C:/Program Files/Google/Chrome/Application/chrome.exe','--headless=new','--no-first-run','--no-proxy-server','--remote-debugging-port=9298','--remote-allow-origins=http://localhost:9298','--user-data-dir='+str(A/('chrome-motion-'+str(time.time_ns()))),'about:blank'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,creationflags=subprocess.CREATE_NO_WINDOW)
+    proc=subprocess.Popen(['C:/Program Files/Google/Chrome/Application/chrome.exe','--headless=new','--no-first-run','--no-proxy-server','--remote-debugging-port=9298','--remote-allow-origins=http://localhost:9298','--user-data-dir='+str(Path('C:/Users/Administrator/AppData/Local/Temp')/('laban-final-motion-'+str(time.time_ns()))),'about:blank'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,creationflags=subprocess.CREATE_NO_WINDOW)
     try:
         for _ in range(100):
             try:
@@ -97,6 +97,6 @@ def main():
     except Exception as e:
         report.update(status='FAIL',error_type=type(e).__name__,line=traceback.extract_tb(e.__traceback__)[-1].lineno,reason=str(e)[:500]);raise
     finally:
-        (A/'interaction-motion-qa.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');proc.terminate();proc.wait(timeout=10)
+        (A/'final-motion-qa.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');proc.terminate();proc.wait(timeout=10)
     print(json.dumps(report))
 if __name__=='__main__':main()

@@ -1,3 +1,24 @@
+/* Shared 4/3/2-column grid: the return tile uses the same tracks as groups. */
+.mobile-career-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-auto-flow:row dense;gap:16px!important;align-items:stretch;min-width:0}
+.mobile-career-grid :where(.mobile-group,.mobile-grid-back,.mobile-career-card){display:flex;flex-direction:column;align-items:flex-start;gap:18px;min-height:180px;min-width:0;width:100%;margin:0;padding:22px 20px;border:1px solid #d8e1d0;border-radius:18px;background:#fffef9;color:#193c35;text-align:left;font:inherit;overflow-wrap:anywhere}
+.mobile-career-grid .mobile-group strong{font-size:15px;line-height:1.7}.mobile-group small{margin-top:auto;color:#64766b;font-size:12px}
+.mobile-career-grid svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.mobile-career-grid .mobile-grid-back{background:#24784f;border-color:#24784f;color:white;justify-content:center;gap:20px}.mobile-grid-back strong{font-size:13px;line-height:1.7;color:#f1f7eb}.mobile-back-label{font-size:19px;font-weight:650}
+.mobile-career-grid .mobile-career-card h3{margin:0;font-size:16px;line-height:1.6;font-weight:650}
+.career-library .mobile-career-grid .career-name{display:block;min-height:44px;width:100%;margin:0;padding:0;border:0;border-radius:4px;background:transparent;box-shadow:none;gap:0;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.career-library .mobile-career-grid button:hover{transform:none}
+.mobile-career-grid .career-card-description{margin:0;font-size:13px;line-height:1.8;color:#52685b}
+.career-card-actions{display:flex;flex-direction:column;gap:8px;margin-top:auto;width:100%}
+.career-library .mobile-career-grid .career-explore{display:flex;align-items:center;justify-content:center;width:100%;min-height:44px;padding:10px 8px;gap:0;border:1px solid #24784f;border-radius:12px;background:#24784f;color:#fff;font-size:13px;font-weight:600;line-height:1.5;text-align:center}
+.mobile-career-grid .career-watch-video{display:flex;align-items:center;justify-content:center;min-height:44px;border:1px solid #d8e1d0;border-radius:12px;padding:9px 6px;color:#193c35;background:#fffef9;font-size:12px}
+.mobile-career-grid .mobile-video-card{display:flex;flex-direction:column;min-width:0;padding:0;gap:10px;border:0;border-radius:0;background:none;box-shadow:none;overflow:visible}
+.mobile-video-cover{position:relative;display:block;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:15px;background:#e8efdd;color:#193c35}.mobile-video-cover img{display:block;width:100%;height:100%;object-fit:cover}
+.mobile-video-play{position:absolute;right:10px;bottom:9px;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:#214c3e;background:#fffff4ed;box-shadow:0 3px 12px #193c3520;font-size:14px}
+.mobile-career-grid .mobile-video-card h2{margin:0;min-height:3.2em;font-size:15px;line-height:1.6;font-weight:600;letter-spacing:0;overflow-wrap:anywhere}
+.mobile-comic-link{display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:auto;padding:10px 8px;border:1px solid #d8e1d0;border-radius:12px;background:#fffef9;color:#193c35;text-decoration:none;font-size:13px;line-height:1.5}
+.mobile-grid-empty{grid-column:1/-1;font-size:13px;padding:16px 0;color:#61746a}
+.career-library #career-grid,.career-library #library-more{display:none!important}.mobile-career-grid+.load-more{display:none}
+@media(min-width:761px) and (max-width:1099px){.mobile-career-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 @media(max-width:760px){
   .mobile-career-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-flow:row dense;gap:12px!important;align-items:stretch;min-width:0}
   .mobile-career-grid :where(button,a){-webkit-tap-highlight-color:transparent;touch-action:manipulation}
@@ -25,3 +46,10 @@
   .mobile-career-grid + .load-more{display:none}
 }
 @media(max-width:360px){.mobile-career-grid{gap:10px!important}.mobile-career-grid :where(.mobile-group,.mobile-grid-back,.mobile-career-card){padding:16px 12px;min-height:158px}.mobile-back-label{font-size:15px}}
+.career-library .library-results-head{display:flex!important;gap:12px;align-items:center;margin:12px 0 18px;font-size:12px;line-height:1.7}.career-library .library-results-head p{margin:0}
+.mobile-career-grid :where(button,a):focus-visible{outline:3px solid #b8744e;outline-offset:3px}
+.career-detail-dialog{max-width:min(820px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;overscroll-behavior:contain;opacity:0;transform:translateY(3px);transition:opacity 150ms ease-out,transform 150ms ease-out,display 150ms allow-discrete,overlay 150ms allow-discrete}
+.career-detail-dialog[open]{opacity:1;transform:none}.career-detail-dialog:not([open]){pointer-events:none}.career-detail-dialog .dialog-close{position:sticky;top:0;float:right;min-width:44px;min-height:44px;background:#fffef9;z-index:1}.career-detail-dialog .career-profile-section summary{min-height:44px}.career-detail-dialog .career-profile-content{overflow-wrap:anywhere}.career-detail-dialog :where(button,a,summary):focus-visible{outline:3px solid #b8744e;outline-offset:2px}
+@starting-style{.career-detail-dialog[open]{opacity:0;transform:translateY(3px)}}
+@media(max-width:760px){.mobile-career-grid .career-card-description{font-size:12px;line-height:1.8}.career-detail-dialog{padding:20px 16px}.career-detail-dialog .library-modal-actions .btn{width:100%;min-height:44px}}
+@media(prefers-reduced-motion:reduce){.career-detail-dialog{transition:none!important;transform:none!important}}

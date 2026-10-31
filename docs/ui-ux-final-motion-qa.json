@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "environment": "Chrome desktop/mobile emulation; no physical phone",
+  "checks": {
+    "home_unchanged_320": true,
+    "rapid_group_return_320": true,
+    "keyboard_and_pointer_or_touch_320": true,
+    "rapid_disclosure_keyboard_content_scroll_reduced_motion_320": true,
+    "home_unchanged_360": true,
+    "rapid_group_return_360": true,
+    "keyboard_and_pointer_or_touch_360": true,
+    "rapid_disclosure_keyboard_content_scroll_reduced_motion_360": true,
+    "home_unchanged_390": true,
+    "rapid_group_return_390": true,
+    "keyboard_and_pointer_or_touch_390": true,
+    "rapid_disclosure_keyboard_content_scroll_reduced_motion_390": true,
+    "home_unchanged_412": true,
+    "rapid_group_return_412": true,
+    "keyboard_and_pointer_or_touch_412": true,
+    "rapid_disclosure_keyboard_content_scroll_reduced_motion_412": true,
+    "home_unchanged_1280": true,
+    "keyboard_and_pointer_or_touch_1280": true,
+    "rapid_disclosure_keyboard_content_scroll_reduced_motion_1280": true,
+    "home_unchanged_1440": true,
+    "keyboard_and_pointer_or_touch_1440": true,
+    "rapid_disclosure_keyboard_content_scroll_reduced_motion_1440": true
+  },
+  "js_errors": 0
+}

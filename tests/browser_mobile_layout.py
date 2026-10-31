@@ -66,17 +66,17 @@ class Browser:
 async def run(tab):
     global GUEST_ROLE
     report={'environment':'desktop Chrome emulating mobile; NOT physical phones','chat_auth_model_mic':'CDP fixtures on loopback ONLY; not deployed','career_data':'real local API/catalog','widths':{},'status':'RUNNING'}
-    if '--desktop-only' in sys.argv:report=json.loads((ART/'mobile-layout-qa.json').read_text(encoding='utf8'))
-    def save():(ART/'mobile-layout-qa.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
+    if '--desktop-only' in sys.argv:report=json.loads((ART/'final-layout-qa.json').read_text(encoding='utf8'))
+    def save():(ART/'final-layout-qa.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
     async with websockets.connect(tab['webSocketDebuggerUrl'],origin='http://localhost:9294',max_size=20000000) as ws:
         b=Browser(ws)
         for m in ('Runtime.enable','Page.enable','Network.enable'):await b.call(m)
         await b.call('Page.addScriptToEvaluateOnNewDocument',{'source':MIC})
         await b.call('Fetch.enable',{'patterns':[{'urlPattern':origin+p} for origin in (O,'http://127.0.0.1:8079') for p in ('/assets/firebase-client.js*','/api/auth/*','/api/ai/*')]})
         groups=httpx.get(O+'/api/career-library/categories').json()['items'];assert sum(x['count'] for x in groups)==200
-        for width in (() if '--desktop-only' in sys.argv else (320,360,390,412)):
+        for width in ((1280,1440) if '--desktop-only' in sys.argv else (320,360,390,412,1280,1440)):
             checks={};report['widths'][str(width)]=checks
-            await b.call('Emulation.setDeviceMetricsOverride',{'width':width,'height':844,'deviceScaleFactor':1,'mobile':True})
+            await b.call('Emulation.setDeviceMetricsOverride',{'width':width,'height':844,'deviceScaleFactor':1,'mobile':width<=760})
             for kind,path,host in [('careers','/#careers','#library-categories'),('stories','/mot-ngay-lam-viec','#story-grid')]:
                 await b.call('Page.navigate',{'url':O+path});await b.wait(f'document.querySelectorAll("{host} [data-mobile-group]").length===12')
                 order=await b.evaluate(f'[...document.querySelectorAll("{host} [data-mobile-group]")].map(n=>n.dataset.mobileGroup)');assert order==[g['category_id'] for g in groups]
@@ -85,7 +85,7 @@ async def run(tab):
                     await b.click(f'{host} [data-mobile-group="{g["category_id"]}"]')
                     await b.wait(f'document.querySelectorAll("{host} [data-mobile-career]").length==={g["count"]}')
                     cells=await b.evaluate(f'[...document.querySelectorAll("{host} [data-mobile-career]")].map(n=>n.dataset.mobileCareer)');seen.update(cells)
-                    back=await b.evaluate(f'(()=>{{const n=document.querySelector("{host} [data-mobile-back]");return [n.style.gridRowStart,n.style.gridColumnStart,n.getBoundingClientRect().height]}})()');assert back[0]==str(i//2+1) and back[1]==str(i%2+1) and back[2]>=44
+                    back=await b.evaluate(f'(()=>{{const n=document.querySelector("{host} [data-mobile-back]");return [n.style.gridRowStart,n.style.gridColumnStart,n.getBoundingClientRect().height]}})()');assert back[0]==str(i//(2 if width<=760 else 4)+1) and back[1]==str(i%(2 if width<=760 else 4)+1) and back[2]>=44
                     assert await b.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
                     if kind=='stories':assert await b.evaluate("[...document.querySelectorAll('.mobile-video-cover')].every(n=>Math.abs(n.getBoundingClientRect().width/n.getBoundingClientRect().height-16/9)<.04)&&[...document.querySelectorAll('.mobile-comic-link')].every(n=>n.getBoundingClientRect().height>=44)")
                     await b.click(f'{host} [data-mobile-back]');await b.wait(f'document.querySelectorAll("{host} [data-mobile-group]").length===12')
@@ -100,9 +100,13 @@ async def run(tab):
                     await b.click('.mobile-comic-link');await b.wait("document.querySelector('#tab-comic')?.getAttribute('aria-selected')==='true'&&document.querySelector('#scene-art svg')");await b.click('#next-scene');assert await b.evaluate("document.querySelector('#reading-progress').value>0");await b.click('#tab-video');assert await b.evaluate("document.querySelector('#tab-video').getAttribute('aria-selected')==='true'");checks['video_comic_reader']=True
                 await b.call('Page.navigate',{'url':O+path});await b.wait(f'document.querySelectorAll("{host} [data-mobile-group]").length===12')
                 if kind=='careers':await b.evaluate("document.querySelector('#careers').scrollIntoView();window.scrollBy(0,-100)")
-                await b.shot(f'mobile-{kind}-{width}.png')
-                await b.click(f'{host} [data-mobile-group="{groups[2]["category_id"]}"]');await b.wait(f'document.querySelectorAll("{host} [data-mobile-career]").length>0');await b.shot(f'mobile-{kind}-selected-{width}.png')
+                await b.shot(f'final-{kind}-{width}.png')
+                await b.click(f'{host} [data-mobile-group="{groups[2]["category_id"]}"]');await b.wait(f'document.querySelectorAll("{host} [data-mobile-career]").length>0');await b.shot(f'final-{kind}-selected-{width}.png')
             await b.call('Page.navigate',{'url':O+'/ai-career-advisor?conversation='+SID});await b.wait("document.querySelectorAll('.answer-more').length===1")
+            assert await b.evaluate("document.querySelector('.assistant-identity h1').innerText==='La Bàn AI'&&document.querySelector('#mobile-account').getBoundingClientRect().width>=44")
+            await b.click('#open-sidebar')
+            if width<=760:await b.click('#close-sidebar')
+            else:assert await b.evaluate("document.activeElement.id==='history-search'")
             assert await b.evaluate("document.querySelector('.answer-evidence')&&!document.querySelector('.answer-evidence').open&&!document.querySelector('.answer-more').open")
             assert await b.evaluate("document.querySelector('.source-list').open&&document.querySelector('.source-list a').getClientRects().length>0")
             assert await b.evaluate("[...document.querySelectorAll('.message-bubble h3')].find(n=>n.textContent==='Kết luận').getClientRects().length>0")
@@ -115,15 +119,16 @@ async def run(tab):
                 assert await b.evaluate('document.querySelector("#messages").textContent.includes('+json.dumps(marker)+')')
             assert await b.evaluate("document.documentElement.scrollWidth<=innerWidth+1&&document.querySelector('#send-message').getBoundingClientRect().width>=44&&document.querySelector('#microphone').getBoundingClientRect().width>=44")
             checks['chat_disclosures_sources_conclusion_scroll_content']=True
-            await b.shot(f'mobile-chat-{width}.png')
-            await b.evaluate("const s=document.querySelector('#chat-scroll');s.scrollTop=s.scrollHeight;document.querySelector('#message-input').focus()")
-            await b.call('Emulation.setDeviceMetricsOverride',{'width':width,'height':380,'deviceScaleFactor':1,'mobile':True})
-            await b.wait("document.querySelector('.composer-area').getBoundingClientRect().bottom<=381")
-            await asyncio.sleep(.15)
-            assert await b.evaluate("document.querySelector('#message-input').getBoundingClientRect().bottom<=380&&document.querySelector('#chat-scroll').getBoundingClientRect().bottom<=document.querySelector('.composer-area').getBoundingClientRect().top+1")
-            checks['keyboard_viewport_simulation']=True
-            await b.call('Emulation.setDeviceMetricsOverride',{'width':width,'height':844,'deviceScaleFactor':1,'mobile':True})
-            await b.wait("document.querySelector('.composer-area').getBoundingClientRect().bottom>700")
+            await b.shot(f'final-chat-{width}.png')
+            if width<=760:
+                await b.evaluate("const s=document.querySelector('#chat-scroll');s.scrollTop=s.scrollHeight;document.querySelector('#message-input').focus()")
+                await b.call('Emulation.setDeviceMetricsOverride',{'width':width,'height':380,'deviceScaleFactor':1,'mobile':width<=760})
+                await b.wait("document.querySelector('.composer-area').getBoundingClientRect().bottom<=381")
+                await asyncio.sleep(.15)
+                assert await b.evaluate("document.querySelector('#message-input').getBoundingClientRect().bottom<=380&&document.querySelector('#chat-scroll').getBoundingClientRect().bottom<=document.querySelector('.composer-area').getBoundingClientRect().top+1")
+                checks['keyboard_viewport_simulation']=True
+                await b.call('Emulation.setDeviceMetricsOverride',{'width':width,'height':844,'deviceScaleFactor':1,'mobile':width<=760})
+                await b.wait("document.querySelector('.composer-area').getBoundingClientRect().bottom>700")
             await b.evaluate("document.querySelector('#message-input').value='Bản nháp kiểm thử';document.querySelector('#message-input').dispatchEvent(new Event('input'))")
             await b.call('Page.reload');await b.wait("document.querySelector('#message-input')?.value==='Bản nháp kiểm thử'");checks['draft_reload']=True
             await b.click('#microphone');await b.wait("document.querySelector('#message-input').value.includes('Bản nháp giọng nói kiểm thử')");assert not requests;checks['mic_simulation_no_auto_send']=True
@@ -143,32 +148,15 @@ async def run(tab):
         assert len(requests)==2 and requests[0]['request_id']==requests[1]['request_id']
         report['friendly_error_and_retry_same_request_id']=True;requests.clear()
         GUEST_ROLE=True
-        for width in (320,360,390,412):
-            await b.call('Emulation.setDeviceMetricsOverride',{'width':width,'height':844,'deviceScaleFactor':1,'mobile':True})
+        for width in (320,360,390,412,1280,1440):
+            await b.call('Emulation.setDeviceMetricsOverride',{'width':width,'height':844,'deviceScaleFactor':1,'mobile':width<=760})
             await b.call('Page.navigate',{'url':O+'/ai-career-advisor?conversation='+SID});await b.wait("document.querySelector('#guest-quota-text')?.textContent.includes('5/8')")
             assert await b.evaluate("document.documentElement.scrollWidth<=innerWidth+1&&document.querySelector('#open-sidebar').getBoundingClientRect().height>=44&&document.querySelector('#mobile-account').getBoundingClientRect().height>=44")
-        report['guest_quota_uses_api_fixture_values_four_widths']=True;GUEST_ROLE=False
-        # Desktop comparison uses the unchanged released checkout, same API fixtures.
-        await b.call('Page.addScriptToEvaluateOnNewDocument',{'source':"if(location.hostname==='127.0.0.1')sessionStorage.clear()"})
-        await b.call('Emulation.setDeviceMetricsOverride',{'width':1440,'height':1000,'deviceScaleFactor':1,'mobile':False})
-        desktop=[]
-        for origin in ('http://127.0.0.1:8079',O):
-            await b.call('Page.navigate',{'url':origin+'/ai-career-advisor?conversation='+SID});await b.wait("document.querySelector('#chat-app')?.hidden===false&&document.querySelectorAll('.message-row').length>=3")
-            await b.evaluate('document.fonts.ready.then(()=>true)')
-            desktop.append(await b.evaluate("Object.fromEntries(['.chat-header','.chat-sidebar','.composer-area','.assistant-identity'].map(s=>{const r=document.querySelector(s).getBoundingClientRect();return [s,[r.x,r.y,r.width,r.height]]}))"))
-            if origin!=O:assert await b.evaluate("!document.querySelector('.answer-more')&&!document.querySelector('.answer-evidence')")
-            else:assert await b.evaluate("Boolean(document.querySelector('.answer-more')&&document.querySelector('.answer-evidence'))")
-        assert all(abs(a-b)<2 for k in desktop[0] for a,b in zip(desktop[0][k],desktop[1][k])),desktop
-        report['desktop_layout_matches_released_baseline']=True
-        await b.call('Page.navigate',{'url':O+'/#careers'});await b.wait("document.querySelectorAll('#library-categories [data-field]').length===12")
-        assert await b.evaluate("getComputedStyle(document.querySelector('#library-categories')).gridTemplateColumns.split(' ').length===4&&!document.querySelector('.mobile-career-grid')")
-        await b.click('#library-categories [data-field]');await b.wait("document.querySelectorAll('#career-grid .library-card').length===12")
-        await b.call('Page.navigate',{'url':O+'/mot-ngay-lam-viec'});await b.wait("document.querySelectorAll('#story-grid .story-card').length===12")
-        assert not await b.evaluate("Boolean(document.querySelector('.mobile-career-grid'))")
-        report['desktop_career_story_original_grids']=True
+        report['guest_quota_uses_api_fixture_values_six_widths']=True;GUEST_ROLE=False
+        report['desktop_shared_grid_and_compact_header']=True
         assert not b.errors;report['js_errors']=0;report['status']='PASS';save();print(json.dumps(report,ensure_ascii=True))
 def main():
-    proc=subprocess.Popen(['C:/Program Files/Google/Chrome/Application/chrome.exe','--headless=new','--no-first-run','--no-proxy-server','--remote-debugging-port=9294','--remote-allow-origins=http://localhost:9294','--user-data-dir='+str(ART/('chrome-mobile-qa-'+str(time.time_ns()))),'about:blank'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,creationflags=subprocess.CREATE_NO_WINDOW)
+    proc=subprocess.Popen(['C:/Program Files/Google/Chrome/Application/chrome.exe','--headless=new','--no-first-run','--no-proxy-server','--remote-debugging-port=9294','--remote-allow-origins=http://localhost:9294','--user-data-dir='+str(Path('C:/Users/Administrator/AppData/Local/Temp')/('laban-final-layout-'+str(time.time_ns()))),'about:blank'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,creationflags=subprocess.CREATE_NO_WINDOW)
     try:
         for _ in range(100):
             try:

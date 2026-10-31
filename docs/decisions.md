@@ -1,5 +1,10 @@
 # Quyết định và việc còn mở
 
+## UI cuối thay phương án cũ — đã xác nhận 2026-10-31
+
+- Cơ chế nhóm/Quay về thay tại cùng lưới áp dụng cả PC/mobile, giữ4/2cột và đủ kết quả. Khám phá là thông tin nghề với CTA chính “Cùng khám phá”, popup đầy đủ và video phụ; Truyện là video/truyện đúng nghề. Giữ dữ liệu và các mục/action popup cũ, không rút thành tổng quan. Chat theo header gọn, nội dung đầy đủ và trạng thái thật. Được commit nhánh tối ưu/tạo Preview, không push/merge main hoặc phát hành Production. Chi tiết `docs/ui-ux-final-checkpoint.md`.
+
+
 ## Tối ưu UI cả desktop/mobile — đã xác nhận 2026-10-31
 
 - Người dùng cho phép tái sử dụng chọn lọc `fed4dee`, sửa CSS/JS để có chuyển động trên cả PC/điện thoại cho Khám phá/Truyện/Chat, commit nhánh tối ưu và tạo Preview. Desktop giữ cấu trúc, trang chủ giữ nguyên; không push/merge main, đổi env Production hoặc deploy Production. Yêu cầu đã chốt ưu tiên hơn gợi ý skill/mẫu; giữ HTML/Bootstrap, backend/auth/DB/quota8, giấy phép Galaxy và thay đổi local. Xem `docs/ui-ux-optimization-checkpoint.md`.

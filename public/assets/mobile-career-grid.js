@@ -1,6 +1,7 @@
 // Một lưới, cùng dữ liệu nhóm; không tạo bản sao catalog hoặc điều hướng khi chọn nhóm.
 import {revealGrid} from './interaction-motion.js';
 export const mobileCareers = matchMedia('(max-width: 760px)');
+export const wideCareers = matchMedia('(min-width: 1100px)');
 const css=document.createElement('link');css.rel='stylesheet';css.href='/assets/mobile-career-grid.css?v=1';document.head.append(css);
 const paths=[
   'm8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 16',
@@ -34,16 +35,20 @@ export function renderMobileCareers(host,{categories,category='',items=null,kind
   if(selected){
     const back=el('button','mobile-grid-back');back.type='button';back.dataset.mobileBack=category;
     // Vị trí tường minh giữ đúng ô A, các thẻ còn lại tự lấp những ô trống.
-    back.style.gridRow=String(Math.floor(slot/2)+1);back.style.gridColumn=String(slot%2+1);
+    const columns=wideCareers.matches?4:mobileCareers.matches?2:3;
+    back.style.gridRow=String(Math.floor(slot/columns)+1);back.style.gridColumn=String(slot%columns+1);
     back.append(el('span','mobile-back-label','← Quay về'),el('strong','',selected.name));
     back.addEventListener('click',()=>{onBack();requestAnimationFrame(()=>host.querySelector(`[data-mobile-group="${CSS.escape(category)}"]`)?.focus({preventScroll:true}));});host.append(back);
   }
   for(const c of items){
     const cid=c.career_id||c.id,groupIndex=categories.findIndex(g=>g.category_id===c.category_id);
     if(kind==='career'){
-      const button=el('button','mobile-career-card');button.type='button';button.dataset.mobileCareer=cid;
-      button.append(icon(Math.max(0,groupIndex)),el('h3','',c.name),el('span','mobile-career-link','Tìm hiểu nghề ↗'));
-      button.addEventListener('click',()=>onCareer(cid));host.append(button);
+      const card=el('article','mobile-career-card');card.dataset.mobileCareer=cid;
+      const title=el('h3'),name=el('button','career-name',c.name);name.type='button';name.addEventListener('click',()=>onCareer(cid));title.append(name);
+      const description=el('p','career-card-description',c.short_description||c.description||'');
+      const actions=el('div','career-card-actions'),explore=el('button','career-explore','Cùng khám phá');explore.type='button';explore.addEventListener('click',()=>onCareer(cid));
+      const video=el('a','career-watch-video','Xem video');video.href=`/mot-ngay-lam-viec?nghe=${encodeURIComponent(cid)}&tab=video`;video.setAttribute('aria-label',`Xem video: ${c.name}`);
+      actions.append(explore,video);card.append(icon(Math.max(0,groupIndex)),title,description,actions);host.append(card);
     }else{
       const card=el('article','mobile-video-card story-card');card.dataset.mobileCareer=cid;
       const video=el('a','mobile-video-cover story-open-video');video.href=href(cid,'video');video.dataset.story=cid;

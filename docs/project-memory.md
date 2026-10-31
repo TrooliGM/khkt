@@ -1,5 +1,11 @@
 # Bộ nhớ dự án: Website Hướng nghiệp KHKT 2027
 
+## UI cuối: lưới nhóm chung PC/mobile và popup đầy đủ — 2026-10-31
+
+- Theo yêu cầu cuối, tiếp tục HEAD1183f40 trên nhánh tối ưu; mở rộng lưới12nhóm thành4cột PC/2cột mobile, thay ngay tại chỗ bằng đủ nghề, Quay về giữ hàng/cột và bộ đếm thật. Thẻ Khám phá có mô tả, Cùng khám phá mở popup đầy đủ và Video phụ; Truyện dùng thumbnail thật và truyện riêng. Chat header gọn trên cả hai loại thiết bị; giữ nội dung, hội thoại và quota.
+- Tái sử dụng fed4dee qua493c198, giữ dataset/backend/auth/DB/homepage, hiệu ứng có phạm vi và MIT Galaxy. QA6width/popup đủ nội dung/action/keyboard/race/reduced-motion; chưa phần cứng thật. Đang chốt commit và Preview mới; xem `docs/ui-ux-final-checkpoint.md`. Không push/merge main hoặc Production.
+
+
 ## UI desktop/mobile và chuyển động — 2026-10-31
 
 Hậu kiểm mới: source `493c1980c4cc37f7d86768625884ca755e020ca8`, Preview `https://quocan4-oj7xqhmfi-khkt3.vercel.app`, deployment `dpl_HEb8TiMXSYGWUyJLWiYxU1H3vTuA` READY/SHA khớp. Preview thật PASS UI cả5width/mobile-desktop, Member SDK/DeepSeek gửi mới/draft-reload, toàn văn câu trả lời LIVE cũ3709ký tự và1video mẫu. Guest QA cũ HTTP401 nên quota LIVE mới bị chặn; không reset/thay Guest. Chưa thiết bị/mic thật. Project env/Production giữ nguyên, không push main. Báo cáo và ảnh trong checkpoint; hậu kiểm được commit tài liệu riêng sau commit nguồn, không đổi SHA runtime493c198.

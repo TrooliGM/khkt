@@ -110,7 +110,7 @@ function renderGuestQuota() {
   const label = $('#guest-quota-text');
   if (!config?.is_guest) return;
   const {limit, remaining} = guestQuota || {};
-  if(mobileChat.matches&&Number.isInteger(limit)&&limit>0&&Number.isInteger(remaining)){
+  if(Number.isInteger(limit)&&limit>0&&Number.isInteger(remaining)){
     label.textContent=remaining===0?`Khách · hết ${limit} lượt`:`Khách · còn ${remaining}/${limit} lượt`;return;
   }
   if (!Number.isInteger(limit) || limit <= 0 || !Number.isInteger(remaining)) {
@@ -217,7 +217,7 @@ function setSidebar(open) {
   const mobile = window.innerWidth <= 760;
   $('#chat-sidebar').classList.toggle('open', mobile && open);
   $('#drawer-backdrop').hidden = !mobile || !open;
-  $('#open-sidebar').setAttribute('aria-expanded', String(mobile && open));
+  $('#open-sidebar').setAttribute('aria-expanded', String(!mobile||open));
   $('#chat-main').inert = mobile && open;
   $('#chat-sidebar').inert = mobile && !open;
   if (mobile) { if (open) $('#close-sidebar').focus(); else $('#open-sidebar').focus(); }
@@ -610,7 +610,7 @@ function clearPrivateUI() {
 $('#new-chat').addEventListener('click', freshChat);
 $('#end-session').addEventListener('click', freshChat);
 $('#history-search').addEventListener('input', renderHistory);
-$('#open-sidebar').addEventListener('click', () => setSidebar(true));
+$('#open-sidebar').addEventListener('click', () => {setSidebar(true);if(window.innerWidth>760)$('#history-search').focus({preventScroll:true});});
 $('#close-sidebar').addEventListener('click', () => setSidebar(false));
 $('#drawer-backdrop').addEventListener('click', () => setSidebar(false));
 document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && $('#chat-sidebar').classList.contains('open')) setSidebar(false); });
