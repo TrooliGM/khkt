@@ -1,4 +1,6 @@
 import {journeyPath,installJourneyNavigation,recordExploration} from './chat-journey.js';
+import {mobileCareers,renderMobileCareers,clearMobileGrid} from './mobile-career-grid.js';
+import {revealGrid} from './interaction-motion.js';
 installJourneyNavigation();
 ﻿import {storyArt} from './story-art.js';
 import {comicCover} from './story-thumbnails.js';
@@ -7,7 +9,7 @@ import {YouTubePlayer} from './youtube-player.js';
 const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const normalize=s=>s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d');
 let catalog=null,story=null,index=0,answers=new Map(),shown=12,view='comic',videoRows=[],selectedVideo=null;
-let controller,epoch=0,readonly=false,requestedURL=location.href,ended=false,searchTimer;
+let controller,epoch=0,readonly=false,requestedURL=location.href,ended=false,searchTimer,careerGroups=[];
 const player=new YouTubePlayer($('#youtube-host'),message=>{
   $('#video-fallback-text').textContent=message;$('#video-fallback').hidden=false;
 });
@@ -90,19 +92,25 @@ function libraryCards(){
   const query=normalize($('#story-search').value),category=$('#story-category-filter').value;
   const matches=catalog.filter(c=>(!category||c.category_id===category)&&normalize(c.name).includes(query));
   const withVideo=matches.filter(c=>c.video_count>0).length;
+  if(mobileCareers.matches){
+    const href=(id,tab)=>{const u=new URL(location.href);u.searchParams.set('nghe',id);u.searchParams.set('tab',tab);return u.pathname+u.search;};
+    renderMobileCareers($('#story-grid'),{categories:careerGroups,category,items:category||query?matches:null,kind:'video',href,onSelect:id=>{$('#story-category-filter').value=id;$('#story-search').value='';filterURL(true);},onBack:()=>{$('#story-category-filter').value='';$('#story-search').value='';filterURL(true);}});
+    $('#story-count').textContent=category||query?`${matches.length} nghề · ${withVideo} video`:'Chọn nhóm nghề em muốn tìm hiểu.';$('#story-more').hidden=true;return;
+  }
+  clearMobileGrid($('#story-grid'));
   $('#story-count').textContent=matches.length?`${matches.length} nghề · ${withVideo} nghề có video đã rà soát · ${matches.length-withVideo} chưa có video`:'Chưa tìm thấy nghề. Em thử từ khóa hoặc nhóm khác nhé.';
   $('#story-grid').innerHTML=matches.slice(0,shown).map(c=>{
     const v=c.cover_video;
     const cover=v?`<img src="${esc(v.thumbnail_url)}" width="640" height="360" loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="Ảnh thu nhỏ YouTube: ${esc(v.title)}"><span class="cover-play" aria-hidden="true">▶</span>`:comicCover(c.category_id);
     const path='/mot-ngay-lam-viec?nghe='+encodeURIComponent(c.id);
     return `<article class="story-card"><a class="story-card-main" href="${path}" data-story="${esc(c.id)}"><div class="card-cover">${cover}</div><p class="card-label">${v?'VIDEO YOUTUBE + TRUYỆN':'TRUYỆN TƯƠNG TÁC · 5 CẢNH'}</p><h2>${esc(c.name)}</h2><p>${esc(c.short_description)}</p></a><nav class="story-card-actions" aria-label="Cách tìm hiểu nghề ${esc(c.name)}">${v?`<a class="story-open-video" href="${path}&tab=video" data-story="${esc(c.id)}">▶ Xem video</a>`:'<span class="story-video-missing">Chưa có video đã duyệt</span>'}<a class="story-open-comic" href="${path}&tab=comic" data-story="${esc(c.id)}">Đọc truyện →</a></nav></article>`;
-  }).join('');$('#story-more').hidden=shown>=matches.length;
+  }).join('');$('#story-more').hidden=shown>=matches.length;revealGrid($('#story-grid'));
 }
-function filterURL(){
+function filterURL(push=false){
   shown=12;libraryCards();const u=new URL(location.href);const conversation=u.searchParams.get('conversation');u.search='';if(conversation)u.searchParams.set('conversation',conversation);
   if($('#story-search').value.trim())u.searchParams.set('q',$('#story-search').value.trim());
   if($('#story-category-filter').value)u.searchParams.set('category',$('#story-category-filter').value);
-  history.replaceState(null,'',u);
+  history[push===true?'pushState':'replaceState'](null,'',u);
 }
 async function route({push=null,resume=false}={}){
   remember();controller?.abort();player.clear();const turn=++epoch;
@@ -114,8 +122,8 @@ async function route({push=null,resume=false}={}){
   try{
     if(!id){
       story=null;
-      if(!catalog){const data=await json('/api/career-stories',current.signal);if(turn!==epoch)return;catalog=data.items;readonly=data.preview_read_only;}
-      const categories=new Map(catalog.map(c=>[c.category_id,c.category]));
+      if(!catalog){const [data,groups]=await Promise.all([json('/api/career-stories',current.signal),json('/api/career-library/categories',current.signal)]);if(turn!==epoch)return;catalog=data.items;readonly=data.preview_read_only;careerGroups=groups.items;}
+      const categories=new Map(careerGroups.map(c=>[c.category_id,c.name]));
       $('#story-category-filter').innerHTML='<option value="">Tất cả nhóm nghề</option>'+[...categories].map(([id,name])=>`<option value="${esc(id)}">${esc(name)}</option>`).join('');
       $('#story-search').value=(url.searchParams.get('q')||'').slice(0,120);$('#story-category-filter').value=categories.has(url.searchParams.get('category'))?url.searchParams.get('category'):'';
       shown=12;libraryCards();$('#story-library').hidden=false;document.title='Thế giới nghề nghiệp · La Bàn';return;
@@ -124,6 +132,8 @@ async function route({push=null,resume=false}={}){
     const [data,videos]=await Promise.all([json('/api/career-stories/'+encodeURIComponent(id),current.signal),json('/api/career-videos/'+encodeURIComponent(id),current.signal)]);
     if(turn!==epoch)return;
     story=data;videoRows=videos.items;readonly=videos.preview_read_only;index=0;answers=new Map();ended=false;
+    const libraryURL=new URL(location.href);for(const key of ['nghe','career_id','tab','video','scene'])libraryURL.searchParams.delete(key);
+    document.querySelectorAll('[data-library]').forEach(a=>a.href=libraryURL.pathname+libraryURL.search);
     recordExploration(id);
     if(resume||url.searchParams.has('scene'))restore();
     const requestedScene=data.scenes.findIndex(s=>s.scene_id===url.searchParams.get('scene'));if(requestedScene>=0)index=requestedScene;
@@ -172,6 +182,7 @@ document.addEventListener('click',e=>{
   if(choice&&story){const s=story.scenes[index];if(!s.choices.some(c=>c.choice_id===choice.dataset.choice))return;const draft=$('#story-question').value;answers.set(s.scene_id,choice.dataset.choice);renderScene();$('#story-question').value=draft;}
 });
 window.addEventListener('popstate',()=>route({resume:true}));
+mobileCareers.addEventListener('change',()=>{if(catalog&&!$('#story-library').hidden)libraryCards();});
 window.addEventListener('pageshow',event=>{if(event.persisted)route({resume:true});});
 window.addEventListener('pagehide',()=>{remember();controller?.abort();player.clear();});
 route({resume:performance.getEntriesByType('navigation')[0]?.type==='back_forward'});

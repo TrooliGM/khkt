@@ -6,6 +6,7 @@ import {chatLoginURL, saveDraft, loadDraft, rememberJourney, forgetJourney, curr
 import {explorationQuestion} from './career-question.js';
 import {storyQuestion} from './story-journey.js';
 import {navigationButtons,keepVerifiedCitations} from './navigation-actions.js?v=task44-2';
+import {mobileChat,prepareMobileAnswer} from './mobile-chat.js';
 
 installJourneyNavigation();
 const $ = (selector) => document.querySelector(selector);
@@ -109,6 +110,9 @@ function renderGuestQuota() {
   const label = $('#guest-quota-text');
   if (!config?.is_guest) return;
   const {limit, remaining} = guestQuota || {};
+  if(mobileChat.matches&&Number.isInteger(limit)&&limit>0&&Number.isInteger(remaining)){
+    label.textContent=remaining===0?`Khách · hết ${limit} lượt`:`Khách · còn ${remaining}/${limit} lượt`;return;
+  }
   if (!Number.isInteger(limit) || limit <= 0 || !Number.isInteger(remaining)) {
     label.textContent = 'Bạn đang dùng thử · Đang tải số lượt còn lại…';
     return;
@@ -146,7 +150,7 @@ function updateControls() {
   $('#guest-banner').classList.toggle('limit-reached',Boolean(exhausted));
   $('#guest-login').setAttribute('aria-disabled',String(busy || listening));
   renderGuestQuota();
-  $('#connection-status').textContent = phase === 'thinking' ? 'Đang suy nghĩ' : phase === 'starting-mic' ? 'Đang mở mic' : phase === 'listening' ? 'Đang nghe' : phase === 'transcribing' ? 'Đang nhận diện' : config?.mode === 'demo' ? 'Bản demo' : config?.configured ? 'Sẵn sàng' : 'Chưa cấu hình';
+  $('#connection-status').textContent = phase === 'thinking' ? 'Đang suy nghĩ' : phase === 'starting-mic' ? 'Đang mở mic' : phase === 'listening' ? 'Đang nghe' : phase === 'transcribing' ? 'Đang nhận diện' : config?.mode === 'demo' ? 'Bản demo' : config?.configured ? 'Sẵn sàng' : 'Tạm thời chưa sẵn sàng';
 }
 async function api(path, options = {}, retried = false) {
   if (!user || (!user.server_guest && auth?.currentUser?.uid !== user.uid)) throw new Error('Phiên đăng nhập đã thay đổi. Vui lòng đăng nhập lại.');
@@ -184,7 +188,7 @@ async function jsonAPI(path, options = {}) {
   return data;
 }
 function failure(error) {
-  if(error.status===429)return error.message;
+  if(error.status===429)return error.code==='GUEST_LIMIT_REACHED'?`Bạn đã dùng hết ${guestQuota?.limit||8} lượt miễn phí. Đăng nhập để tiếp tục nhé.`:error.code==='ANALYSIS_DAILY_LIMIT'?'Bạn đã dùng hết lượt phân tích hôm nay. Câu trả lời vẫn được giữ; bạn có thể tiếp tục trò chuyện.':'Bạn đang gửi hơi nhanh. Chờ một chút rồi thử lại nhé.';
   if(error.status===401)return 'Phiên đăng nhập đã thay đổi. Vui lòng đăng nhập lại.';
   return error instanceof TypeError||['TimeoutError','AbortError'].includes(error.name)?'Kết nối đang gián đoạn. Bạn có thể thử lại.':'Chưa thể trả lời lúc này. Vui lòng thử lại.';
 }
@@ -262,13 +266,13 @@ function plainMessage(message) {
   return message.content + (message.recommendations || []).map((career, i) =>
     `\n\n${i+1}. ${career.name}\n${career.reason}\nKỹ năng: ${career.skills}\nThách thức: ${career.challenge}\nBước thử nhỏ: ${career.next_step}`).join('');
 }
-function messageRow(message) {
+function messageRow(message,index=0) {
   const row = document.createElement('article'); row.className = `message-row ${message.role}`;
   const body = document.createElement('div'); body.className = 'message-body';
   const label = document.createElement('span'); label.className = 'message-label'; label.textContent = 'Bạn';
   const bubble = document.createElement('div'); bubble.className = 'message-bubble';
   if (message.role === 'assistant') markdown(bubble, message.content,message.sources);
-  else bubble.textContent = message.request_id === active?.messages?.[0]?.survey?.analysis_request_id
+  else bubble.textContent = message.request_id && message.request_id === active?.messages?.[0]?.survey?.analysis_request_id
     ? 'Em đã hoàn thành khảo sát và muốn khám phá những hướng nghề đáng tìm hiểu.' : message.content;
   if (message.recommendations?.length) {
     const cards = document.createElement('div'); cards.className = 'recommendations';
@@ -312,16 +316,19 @@ function messageRow(message) {
     actions.append(copy);
     body.append(actions);
   }
-  row.append(body); return row;
+  row.append(body);if(message.role==='assistant')prepareMobileAnswer(row,`${active?.id||'current'}:${message.request_id||index}`,message.sources||[]);return row;
 }
 function renderMessages() {
   const list = $('#messages'); list.replaceChildren();
   $('#welcome').hidden = Boolean(active); list.hidden = !active;
   if (active) {
     active.messages.forEach((message,index)=>{
-      list.append(messageRow(message));
-      if(index===0 && active.messages[0].survey && !needsSurvey())list.append(surveyResult({result:completedAnalysis(active),job:active.messages[0].analysis_job,
-        busy:analysisRequests.has(analysisKey(active.id)),error:analysisFailures.get(analysisKey(active.id)),onRetry:()=>runAnalysis(active.id,true),beforeOpen:persistJourney}));
+      list.append(messageRow(message,index));
+      if(index===0 && active.messages[0].survey && !needsSurvey()){
+        const resultRow=surveyResult({result:completedAnalysis(active),job:active.messages[0].analysis_job,
+          busy:analysisRequests.has(analysisKey(active.id)),error:analysisFailures.get(analysisKey(active.id)),onRetry:()=>runAnalysis(active.id,true),beforeOpen:persistJourney});
+        prepareMobileAnswer(resultRow,`${active.id}:survey`);list.append(resultRow);
+      }
     });
     if (pending && pending.session_id === active.id && !active.messages.some((item) => item.request_id === pending.request_id)) list.append(messageRow({role:'user', content:pending.message}));
   }
@@ -449,6 +456,8 @@ function resizeInput() {
 // Không can thiệp luồng gửi tin, mic hoặc trạng thái hội thoại.
 function syncChatViewport() {
   const viewport = window.visualViewport;
+  $('#message-input').placeholder=mobileChat.matches?'Nhắn cho La Bàn…':desktopInputPlaceholder;
+  const scroll=$('#chat-scroll'),keepTail=document.activeElement===$('#message-input')&&scroll.scrollHeight-scroll.scrollTop-scroll.clientHeight<80;
   if (window.innerWidth <= 760 && viewport && viewport.scale === 1) {
     document.body.style.setProperty('--chat-viewport-height', `${Math.round(viewport.height)}px`);
     document.body.style.setProperty('--chat-viewport-top', `${Math.round(viewport.offsetTop)}px`);
@@ -457,8 +466,10 @@ function syncChatViewport() {
     document.body.style.removeProperty('--chat-viewport-top');
   }
   resizeInput();
+  if(keepTail)requestAnimationFrame(scrollBottom);
 }
 let viewportFrame;
+const desktopInputPlaceholder=$('#message-input').placeholder;
 function scheduleViewportLayout() {
   cancelAnimationFrame(viewportFrame);
   viewportFrame = requestAnimationFrame(syncChatViewport);
@@ -467,6 +478,11 @@ window.addEventListener('resize', scheduleViewportLayout);
 window.visualViewport?.addEventListener('resize', scheduleViewportLayout);
 window.visualViewport?.addEventListener('scroll', scheduleViewportLayout);
 syncChatViewport();
+mobileChat.addEventListener('change',renderGuestQuota);
+$('#mobile-account').addEventListener('click',()=>{
+  if(config?.is_guest){if(!busy){persistJourney();$('#guest-login').click();}return;}
+  setSidebar(true);$('#user-name').tabIndex=-1;$('#user-name').focus({preventScroll:true});
+});
 
 function cancelMic() {
   micTurn++; transcriptAbort?.abort(); transcriptAbort = null;
@@ -679,8 +695,8 @@ async function initialize() {
     $('#user-initial').textContent = config.is_guest ? 'K' : [...(user.displayName || 'Bạn')][0].toLocaleUpperCase('vi');
     const banner = [];
     if (config.mode === 'demo') banner.push('BẢN DEMO · Câu trả lời mẫu để thử giao diện. Chưa kết nối DeepSeek và chưa phân tích năng lực.');
-    else if (!config.configured) banner.push('Tư vấn AI đang chờ cấu hình khóa DeepSeek.');
-    if (micMode === 'browser') banner.push('Mic đang dùng nhận diện của trình duyệt. Google Speech-to-Text cần cấu hình Cloud trên máy chủ.');
+    else if (!config.configured) banner.push('Tư vấn tạm thời chưa sẵn sàng. Bạn có thể thử lại sau một chút.');
+    if(micMode==='browser'&&!mobileChat.matches)banner.push('Mic dùng nhận diện giọng nói của trình duyệt. Cho phép sử dụng micro, kiểm tra chữ rồi gửi.');
     $('#mode-banner').hidden = !banner.length; $('#mode-banner').textContent = banner.join(' ');
     $('#auth-loading').hidden = true; $('#chat-app').hidden = false;
     setSidebar(false);

@@ -13,8 +13,9 @@ test('return path rejects open redirects, credentials and unsafe internal endpoi
 });
 test('tab drafts restore exact step, text and address without account crossover',()=>{
   values.clear();const draft={survey:{step:2,answers:['a','b','nội dung','',''],address:'anh'},message:'Câu hỏi đang sửa'};
-  journey.saveDraft('guest','session',draft);assert.deepEqual(journey.loadDraft('guest','session'),draft);assert.equal(journey.loadDraft('other','session'),null);
-  values.set('laban.advisor.guest','session');journey.transferDrafts('guest','member');assert.deepEqual(journey.loadDraft('member','session'),draft);
+  const restored={...draft,pending:null}; // Không có yêu cầu gửi đang chờ trong hợp đồng hiện có.
+  journey.saveDraft('guest','session',draft);assert.deepEqual(journey.loadDraft('guest','session'),restored);assert.equal(journey.loadDraft('other','session'),null);
+  values.set('laban.advisor.guest','session');journey.transferDrafts('guest','member');assert.deepEqual(journey.loadDraft('member','session'),restored);
   assert.equal(journey.loadDraft('guest','session'),null);
 });
 test('draft expiration and corrupt data fail safely',()=>{

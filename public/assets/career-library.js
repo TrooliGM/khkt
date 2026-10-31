@@ -1,4 +1,6 @@
 import {installJourneyNavigation,recordExploration} from './chat-journey.js';
+import {mobileCareers,renderMobileCareers,clearMobileGrid} from './mobile-career-grid.js';
+import {revealGrid} from './interaction-motion.js';
 installJourneyNavigation();
 const $ = s => document.querySelector(s);
 const escape = value => String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -13,11 +15,38 @@ function categoryState(){
   document.querySelectorAll('[data-field]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.field===category)));
   $('#library-reset').hidden=!selected;
 }
+function mobileURL(push=false){
+  if(!mobileCareers.matches)return;
+  const u=new URL(location.href);u.searchParams.delete('career');
+  for(const key of ['category_id','career_q','all_careers'])u.searchParams.delete(key);
+  if(category)u.searchParams.set('category_id',category);
+  if($('#career-search').value.trim())u.searchParams.set('career_q',$('#career-search').value.trim());
+  if(selected&&!category&&!$('#career-search').value.trim())u.searchParams.set('all_careers','1');
+  u.hash='careers';if(u.href!==location.href)history[push?'pushState':'replaceState'](null,'',u);
+}
+function mobileGrid(items=null,loading=false){
+  renderMobileCareers($('#library-categories'),{categories,category,items,loading,onSelect:id=>{category=id;selected=true;$('#career-search').value='';mobileURL(true);load();},onBack:()=>reset(),onCareer:openCareer});
+}
+function desktopCategories(){
+  const host=$('#library-categories');clearMobileGrid(host);host.replaceChildren();
+  categories.forEach((c,i)=>{const button=document.createElement('button');button.dataset.field=c.category_id;button.setAttribute('aria-pressed',String(c.category_id===category));button.innerHTML=`<span class="field-symbol" aria-hidden="true">${symbols[i]}</span><strong>${escape(c.name)}</strong><small>${c.count} nghề <span aria-hidden="true">↗</span></small>`;button.addEventListener('click',()=>{category=c.category_id;selected=true;$('#career-search').value='';categoryState();load();});host.append(button);});
+}
 async function load(append=false){
   const ticket=++generation;
   if(!append){offset=0;$('#career-grid').replaceChildren();}
   $('#library-more').hidden=true;$('#career-status').textContent='Đang tìm nghề…';
+  $('#career-status').dataset.loading='true';
   try{
+    if(mobileCareers.matches){
+      mobileGrid([],true);
+      const items=[];let total=Infinity;
+      while(items.length<total){
+        const params=new URLSearchParams({q:$('#career-search').value.trim(),category_id:category,offset:String(items.length),limit:'24'});
+        const data=await json('/api/career-library?'+params);if(ticket!==generation)return;
+        total=data.total;items.push(...data.items);if(!data.items.length)break;
+      }
+      mobileGrid(items);categoryState();$('#career-status').textContent=`${items.length} nghề`;return;
+    }
     const params=new URLSearchParams({q:$('#career-search').value.trim(),category_id:category,offset:String(offset),limit:'12'});
     const data=await json('/api/career-library?'+params);
     if(ticket!==generation)return;
@@ -29,7 +58,9 @@ async function load(append=false){
     offset+=data.items.length;
     $('#career-status').textContent=data.total?`${data.total} nghề · Đang xem ${offset} nghề`:'Chưa tìm thấy nghề. Em thử từ khóa khác hoặc bỏ bộ lọc nhé.';
     $('#library-more').hidden=offset>=data.total;
-  }catch(error){if(ticket===generation)$('#career-status').textContent=error.message+' Em có thể bấm Tìm kiếm để thử lại.';}
+    revealGrid($('#career-grid'));
+  }catch(error){if(ticket===generation){$('#career-status').textContent=error.message+' Em có thể bấm Tìm kiếm để thử lại.';$('#library-categories').setAttribute('aria-busy','false');$('#library-categories .mobile-grid-loading')?.remove();}}
+  finally{if(ticket===generation)$('#career-status').dataset.loading='false';}
 }
 async function openCareer(id,update=true){
   if(update){const url=new URL(location.href);url.searchParams.set('career',id);url.hash='careers';if(url.href!==location.href)history.pushState(null,'',url);}
@@ -51,18 +82,20 @@ async function openCareer(id,update=true){
   }catch(e){if(ticket!==modalGeneration||!dialog.open)return;content.replaceChildren();const title=document.createElement('h2');title.id='dialog-title';title.textContent=e.message;content.append(title);}
 }
 window.openLibraryCareer=openCareer;
-$('#search-form').addEventListener('submit',event=>{event.preventDefault();selected=true;categoryState();load();});
-let debounce;$('#career-search').addEventListener('input',()=>{clearTimeout(debounce);debounce=setTimeout(()=>{if($('#career-search').value.trim()){selected=true;categoryState();load();}else reset();},250);});
-$('#show-all').addEventListener('click',()=>{selected=true;category='';$('#career-search').value='';categoryState();load();});
+$('#search-form').addEventListener('submit',event=>{event.preventDefault();selected=true;mobileURL();categoryState();load();});
+let debounce;$('#career-search').addEventListener('input',()=>{clearTimeout(debounce);debounce=setTimeout(()=>{if($('#career-search').value.trim()){selected=true;mobileURL();categoryState();load();}else if(mobileCareers.matches&&category){mobileURL();load();}else reset();},250);});
+$('#show-all').addEventListener('click',()=>{selected=true;category='';$('#career-search').value='';mobileURL(true);categoryState();load();});
 $('#library-more').addEventListener('click',()=>load(true));
-function reset(){generation++;selected=false;category='';offset=0;$('#career-search').value='';$('#career-grid').replaceChildren();$('#library-more').hidden=true;$('#career-status').textContent='Chọn lĩnh vực hoặc tìm kiếm để bắt đầu.';categoryState();}
+function reset({push=true}={}){generation++;selected=false;category='';offset=0;$('#career-search').value='';$('#career-grid').replaceChildren();$('#library-more').hidden=true;$('#career-status').dataset.loading='false';$('#career-status').textContent='Chọn lĩnh vực hoặc tìm kiếm để bắt đầu.';categoryState();if(mobileCareers.matches){if(push)mobileURL(true);mobileGrid();}}
+function restoreMobileFilters(){const p=new URL(location.href).searchParams;category=categories.some(c=>c.category_id===p.get('category_id'))?p.get('category_id'):'';$('#career-search').value=(p.get('career_q')||'').slice(0,120);selected=Boolean(category||$('#career-search').value||p.get('all_careers')==='1');if(selected)load();else reset({push:false});}
 $('#library-reset').addEventListener('click',reset);
 try{
   categories=(await json('/api/career-library/categories')).items;
-  categories.forEach((c,i)=>{const button=document.createElement('button');button.dataset.field=c.category_id;button.setAttribute('aria-pressed','false');button.innerHTML=`<span class="field-symbol" aria-hidden="true">${symbols[i]}</span><strong>${escape(c.name)}</strong><small>${c.count} nghề <span aria-hidden="true">↗</span></small>`;button.addEventListener('click',()=>{category=c.category_id;selected=true;$('#career-search').value='';categoryState();load();});$('#library-categories').append(button);});reset();
+  desktopCategories();if(mobileCareers.matches)restoreMobileFilters();else reset({push:false});
   const returnCareer=new URLSearchParams(location.search).get('career');
   if(returnCareer && /^[a-z0-9-]{1,80}$/.test(returnCareer))await openCareer(returnCareer,false);
 }catch(e){$('#career-status').textContent=e.message;}
 
-window.addEventListener('popstate',()=>{const id=new URLSearchParams(location.search).get('career');if(id&&/^[a-z0-9-]{1,80}$/.test(id))openCareer(id,false);else{modalGeneration++;$('#content-dialog').close();}});
+window.addEventListener('popstate',()=>{if(mobileCareers.matches)restoreMobileFilters();const id=new URLSearchParams(location.search).get('career');if(id&&/^[a-z0-9-]{1,80}$/.test(id))openCareer(id,false);else{modalGeneration++;$('#content-dialog').close();}});
+mobileCareers.addEventListener('change',()=>{if(mobileCareers.matches){if(selected)load();else mobileGrid();}else{desktopCategories();if(selected)load();}});
 window.addEventListener('pageshow',event=>{if(event.persisted)installJourneyNavigation();});

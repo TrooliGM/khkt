@@ -1,5 +1,11 @@
 # Bộ nhớ dự án: Website Hướng nghiệp KHKT 2027
 
+## UI desktop/mobile và chuyển động — 2026-10-31
+
+- Đã tích hợp chọn lọc UI/tests từ `fed4dee` trên nhánh `feat/ui-ux-optimization-20261031`, giữ nền main `19848cd`. Lưới mobile cùng nhóm/200 nghề, chat đọc dài không mất nội dung, motion có phạm vi cho cả desktop/mobile theo UI UX Pro Max và ba mẫu Galaxy có tác giả/MIT. Không đổi trang chủ, backend, auth, database hoặc quota.
+- QA local mới PASS bốn chiều rộng mobile và desktop1440, thao tác nhanh, bàn phím/chạm/hover/focus, reduced-motion, toàn văn/scroll/draft/survey/retry; chat/mic chỉ fixture loopback, không điện thoại thật. Đang chuẩn bị commit UI và Preview đầy đủ, chưa có URL/SHA mới ở mốc này; không Production/push main. Xem `docs/ui-ux-optimization-checkpoint.md`.
+
+
 ## Video 200 nghề đã lên web chính và hậu kiểm PASS — 30/10/2026
 
 Đã push main bằng merge `92703d34cdfacff7aa20a7ca37ae092ed3bd73bc` (runtime100file khớp Preview2366ad4), giữ main auto-deploy=false; phát hành manual Production candidate rồi promote `dpl_AF4FHHHTCci7dGNLuvyiuCDqMojk`. Đã xác minh domain `https://labanhuongnghiep.vercel.app` trỏ đúng READY/SHA. Neon MCP đã OAuth, công cụ đọc project/database trong phiên hoạt động read-only; không đổi DATABASE_URL/tạo DB/reset/migration. Candidate dùng env Production hiện có, MCP đọc đúng hội thoại QA chứng minh nhánh DB Production, không mang DB Preview. Hậu kiểm web chính PASS catalog200/9ghi chú UTF-8/Video-Truyện/tìm-lọc/BackForward desktop-mobile/3mẫu phát/0JSerrors; DeepSeek LIVE Member4,51s, retain/readback/SDKpassword/reload và Guest2/8/còn6 cùng danh tính PASS. Preview đã PASS Google thật + DeepSeek + retain/reload, Guest8/câu9 429/duplicatefree. Kế thừa200/200video cũ,197chưa phát lại trênProduction; không xem/nghe trọn hoặc kiểm Googlepopup mới trênProduction. Không đổi auth/quota/DB/env, không khôi phục Hồ sơ. Rollback READY `dpl_Gqr6yuuyfyurkBYZJEVuFaqjBs6Z`, chưa cần dùng. Tài liệu hậu kiểm lưu riêng sau code phát hành, không redeploy nếu chỉ đổi docs. Xem `docs/career-video-production-result-20261030.md` và checkpoint.

@@ -1,5 +1,10 @@
 # Quyết định và việc còn mở
 
+## Tối ưu UI cả desktop/mobile — đã xác nhận 2026-10-31
+
+- Người dùng cho phép tái sử dụng chọn lọc `fed4dee`, sửa CSS/JS để có chuyển động trên cả PC/điện thoại cho Khám phá/Truyện/Chat, commit nhánh tối ưu và tạo Preview. Desktop giữ cấu trúc, trang chủ giữ nguyên; không push/merge main, đổi env Production hoặc deploy Production. Yêu cầu đã chốt ưu tiên hơn gợi ý skill/mẫu; giữ HTML/Bootstrap, backend/auth/DB/quota8, giấy phép Galaxy và thay đổi local. Xem `docs/ui-ux-optimization-checkpoint.md`.
+
+
 ## Production video đã phát hành, không mở rộng phạm vi QA — 30/10/2026
 
 Đã thực hiện quyền phát hành: Neon OAuth/read-only PASS, Preview Google/DeepSeek/Member/Guest8 PASS, tích hợp/push main92703d3 không force. Production dpl_AF4FHHHTCci7dGNLuvyiuCDqMojk READY, domain chính đã xác minh; candidate env Production không override/Preview DB và runtime100file khớp Preview. Hậu kiểm UI/3mẫu phát/Member/Guest PASS, giữ main:false/DB/quota/auth và không Hồ sơ. Kế thừa200video cũ, không gọi197video chưa phát lại là Production LIVE PASS. Rollback dpl_Gqr6yuuyfyurkBYZJEVuFaqjBs6Z cònREADY, không cần rollback. Commit tài liệu hậu kiểm riêng sau mã phát hành, không redeploy docs-only; SHA đã chạy luôn báo92703d34cdfacff7aa20a7ca37ae092ed3bd73bc.
