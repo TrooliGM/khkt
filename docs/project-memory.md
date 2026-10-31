@@ -2,9 +2,10 @@
 
 ## UI desktop/mobile và chuyển động — 2026-10-31
 
+Hậu kiểm mới: source `493c1980c4cc37f7d86768625884ca755e020ca8`, Preview `https://quocan4-oj7xqhmfi-khkt3.vercel.app`, deployment `dpl_HEb8TiMXSYGWUyJLWiYxU1H3vTuA` READY/SHA khớp. Preview thật PASS UI cả5width/mobile-desktop, Member SDK/DeepSeek gửi mới/draft-reload, toàn văn câu trả lời LIVE cũ3709ký tự và1video mẫu. Guest QA cũ HTTP401 nên quota LIVE mới bị chặn; không reset/thay Guest. Chưa thiết bị/mic thật. Project env/Production giữ nguyên, không push main. Báo cáo và ảnh trong checkpoint; hậu kiểm được commit tài liệu riêng sau commit nguồn, không đổi SHA runtime493c198.
+
 - Đã tích hợp chọn lọc UI/tests từ `fed4dee` trên nhánh `feat/ui-ux-optimization-20261031`, giữ nền main `19848cd`. Lưới mobile cùng nhóm/200 nghề, chat đọc dài không mất nội dung, motion có phạm vi cho cả desktop/mobile theo UI UX Pro Max và ba mẫu Galaxy có tác giả/MIT. Không đổi trang chủ, backend, auth, database hoặc quota.
 - QA local mới PASS bốn chiều rộng mobile và desktop1440, thao tác nhanh, bàn phím/chạm/hover/focus, reduced-motion, toàn văn/scroll/draft/survey/retry; chat/mic chỉ fixture loopback, không điện thoại thật. Đang chuẩn bị commit UI và Preview đầy đủ, chưa có URL/SHA mới ở mốc này; không Production/push main. Xem `docs/ui-ux-optimization-checkpoint.md`.
-
 
 ## Video 200 nghề đã lên web chính và hậu kiểm PASS — 30/10/2026
 

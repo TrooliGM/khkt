@@ -1,0 +1,63 @@
+{
+  "origin": "https://quocan4-oj7xqhmfi-khkt3.vercel.app",
+  "deployment": "dpl_HEb8TiMXSYGWUyJLWiYxU1H3vTuA",
+  "source_sha": "493c1980c4cc37f7d86768625884ca755e020ca8",
+  "fixtures_used": false,
+  "physical_phone_tested": false,
+  "physical_microphone_tested": false,
+  "widths": {
+    "320": {
+      "careers_group_return_search_and_navigation": "PASS",
+      "stories_group_return_search_and_navigation": "PASS",
+      "real_member_draft_reload_no_overflow": "PASS"
+    },
+    "360": {
+      "careers_group_return_search_and_navigation": "PASS",
+      "stories_group_return_search_and_navigation": "PASS",
+      "real_member_draft_reload_no_overflow": "PASS"
+    },
+    "390": {
+      "careers_group_return_search_and_navigation": "PASS",
+      "stories_group_return_search_and_navigation": "PASS",
+      "real_member_draft_reload_no_overflow": "PASS"
+    },
+    "412": {
+      "careers_group_return_search_and_navigation": "PASS",
+      "stories_group_return_search_and_navigation": "PASS",
+      "real_member_draft_reload_no_overflow": "PASS"
+    }
+  },
+  "checks": {
+    "full_live_preview_configuration": true,
+    "real_catalog_200_and_canonical_groups": true,
+    "one_real_video_sample": {
+      "status": "PASS",
+      "video_id": "_WQ_VV4pXPc",
+      "time_start": 2.168084919891357,
+      "time_end": 3.3688911583099364
+    },
+    "inherited_live_member_answer_rendered_new_preview": {
+      "status": "PASS",
+      "characters": 3709,
+      "sources": 0
+    },
+    "real_answer_content_preserved": true,
+    "js_errors": 0,
+    "real_ui_type_send_and_reload": {
+      "status": "PASS",
+      "firebase_password_sdk": true,
+      "real_deepseek_pipeline": "task41",
+      "width": 390,
+      "fixture": false,
+      "pending_indicator_only_during_request": true
+    },
+    "real_existing_guest_quota_ui": {
+      "status": "BLOCKED",
+      "reason": "Existing dedicated QA Guest credential returned HTTP 401 on GET /api/ai/config; identity/quota not reset or replaced.",
+      "no_new_guest_issued": true,
+      "quota_reset": false,
+      "inherited_quota_evidence": "previous full Preview; new local tests use explicit API fixtures"
+    }
+  },
+  "status": "PASS_WITH_LIMITATIONS"
+}
