@@ -2,9 +2,10 @@
 
 ## UI cuối: lưới nhóm chung PC/mobile và popup đầy đủ — 2026-10-31
 
+Hậu kiểm cuối: Preview `https://quocan4-g6cyh2wi1-khkt3.vercel.app`, deployment `dpl_EVzJzsAG9SZnV4Nx3omtUecyV5WY` READY/target null, runtime `bb469a2778beb038e7a39c7f89a9eff90a9cfc63`.6width UI/rapid/focus/keyboard/reduced-motion/nooverflow và Member đã lưu/toolbar PASS; popup390/1440 đủ29 giá trị/mẫu và action đúng nghề. Kế thừa QA popup6width, gửi DeepSeek/nháp/thảo luận và1video mẫu từ13e65ed (chênh runtime chỉ1dòng CSS toolbar). Guest QA cũ401 BLOCKED, không reset/thay Guest; phần cứng thật chưa thử. Project env/Production/main giữ nguyên. Xem `docs/ui-ux-final-checkpoint.md`; tài liệu hậu kiểm commit riêng sau runtime.
+
 - Theo yêu cầu cuối, tiếp tục HEAD1183f40 trên nhánh tối ưu; mở rộng lưới12nhóm thành4cột PC/2cột mobile, thay ngay tại chỗ bằng đủ nghề, Quay về giữ hàng/cột và bộ đếm thật. Thẻ Khám phá có mô tả, Cùng khám phá mở popup đầy đủ và Video phụ; Truyện dùng thumbnail thật và truyện riêng. Chat header gọn trên cả hai loại thiết bị; giữ nội dung, hội thoại và quota.
 - Tái sử dụng fed4dee qua493c198, giữ dataset/backend/auth/DB/homepage, hiệu ứng có phạm vi và MIT Galaxy. QA6width/popup đủ nội dung/action/keyboard/race/reduced-motion; chưa phần cứng thật. Đang chốt commit và Preview mới; xem `docs/ui-ux-final-checkpoint.md`. Không push/merge main hoặc Production.
-
 
 ## UI desktop/mobile và chuyển động — 2026-10-31
 

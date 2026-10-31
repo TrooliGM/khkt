@@ -1,0 +1,167 @@
+{
+  "status": "PASS",
+  "environment": "Chrome emulation; not physical devices",
+  "real_preview_catalog": true,
+  "fixtures": false,
+  "deployment": "dpl_GNUhqHX4puDgePYvaTJmptVBMCLt",
+  "source_sha": "13e65ed0bf17900d5ea2cbc914164833170346df",
+  "widths": {
+    "320": [
+      {
+        "group_index": 0,
+        "count": 20,
+        "profile_values_checked": 29,
+        "sources_checked": 1,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      },
+      {
+        "group_index": 6,
+        "count": 18,
+        "profile_values_checked": 29,
+        "sources_checked": 1,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      },
+      {
+        "group_index": 11,
+        "count": 12,
+        "profile_values_checked": 29,
+        "sources_checked": 0,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      }
+    ],
+    "360": [
+      {
+        "group_index": 0,
+        "count": 20,
+        "profile_values_checked": 29,
+        "sources_checked": 1,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      },
+      {
+        "group_index": 6,
+        "count": 18,
+        "profile_values_checked": 29,
+        "sources_checked": 1,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      },
+      {
+        "group_index": 11,
+        "count": 12,
+        "profile_values_checked": 29,
+        "sources_checked": 0,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      }
+    ],
+    "390": [
+      {
+        "group_index": 0,
+        "count": 20,
+        "profile_values_checked": 29,
+        "sources_checked": 1,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      },
+      {
+        "group_index": 6,
+        "count": 18,
+        "profile_values_checked": 29,
+        "sources_checked": 1,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      },
+      {
+        "group_index": 11,
+        "count": 12,
+        "profile_values_checked": 29,
+        "sources_checked": 0,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      }
+    ],
+    "412": [
+      {
+        "group_index": 0,
+        "count": 20,
+        "profile_values_checked": 29,
+        "sources_checked": 1,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      },
+      {
+        "group_index": 6,
+        "count": 18,
+        "profile_values_checked": 29,
+        "sources_checked": 1,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      },
+      {
+        "group_index": 11,
+        "count": 12,
+        "profile_values_checked": 29,
+        "sources_checked": 0,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      }
+    ],
+    "1280": [
+      {
+        "group_index": 0,
+        "count": 20,
+        "profile_values_checked": 29,
+        "sources_checked": 1,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      },
+      {
+        "group_index": 6,
+        "count": 18,
+        "profile_values_checked": 29,
+        "sources_checked": 1,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      },
+      {
+        "group_index": 11,
+        "count": 12,
+        "profile_values_checked": 29,
+        "sources_checked": 0,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      }
+    ],
+    "1440": [
+      {
+        "group_index": 0,
+        "count": 20,
+        "profile_values_checked": 29,
+        "sources_checked": 1,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      },
+      {
+        "group_index": 6,
+        "count": 18,
+        "profile_values_checked": 29,
+        "sources_checked": 1,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      },
+      {
+        "group_index": 11,
+        "count": 12,
+        "profile_values_checked": 29,
+        "sources_checked": 0,
+        "links": "PASS",
+        "return_position_order": "PASS"
+      }
+    ]
+  },
+  "js_errors": 0
+}

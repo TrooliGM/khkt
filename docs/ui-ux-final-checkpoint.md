@@ -1,5 +1,15 @@
 # UI theo yêu cầu cuối — 2026-10-31
 
+## Bản để xem hiện tại
+
+- **Preview:** https://quocan4-g6cyh2wi1-khkt3.vercel.app — **`dpl_EVzJzsAG9SZnV4Nx3omtUecyV5WY`**, READY/target null. **SHA chạy:** `bb469a2778beb038e7a39c7f89a9eff90a9cfc63`; upload107file từ checkout sạch, đúng SHA. Giữ project env/alias Production, Preview đầy đủ với staging hiện có, không migration/reset.
+- Kiểm mới trên bản cuối:320/360/390/412/1280/1440 nhóm-nghề/video/chat, thao tác nhanh, hover/focus/phím Enter, giảm chuyển động/nooverflow, Member thật đọc hội thoại và toolbar/Kết thúc khi đã lưu PASS;0JSerrors. Popup nhóm0/6/11 kiểm lại ở390/1440, mỗi mẫu29 giá trị hiển thị và nguồn/action/accordion/đóng-mở nhanh PASS. Ảnh PC/mobile/popup chụp từ Preview cuối tại `artifacts/final-preview-*.png`.
+- Kế thừa có giới hạn từ mốc13e65ed ngay trong lượt này: popup18 trường hợp/6width, đủ200 thẻ/12nhóm/bộ đếm/vị trí/thứ tự/tìm-lọc/history, Member draft-reload/toàn văn3709ký tự và UI gửi DeepSeek task41,1video mẫu PLAYING/time tăng. Giữa13e65ed vàbb469a2 chỉ đổi1dòng CSS hiện toolbar chat; mã catalog/popup/player/model/lưu hội thoại không đổi. Giữ riêng báo cáo `*-13e65ed.json`, không gán các lượt gọi model/player này thành kiểm mới trênbb469a2.
+- Chưa kiểm phần cứng điện thoại/mic/keyboard và Google popup mới. Guest QA có sẵn trả HTTP401 ở Preview13e65ed và xác nhận lại cùng HTTP401 trên Preview cuối: **BLOCKED**, không reset/thay Guest; UI quota8 mới chỉ fixture local6width, LIVE cũ là bằng chứng kế thừa. Không phát lại200video; Preview cuối không phát mẫu lại vì player/catalog không đổi.
+- Báo cáo cuối: `ui-ux-final-preview-deployment.json`, `ui-ux-final-preview-interaction-qa.json`, `ui-ux-final-preview-qa.json` (PASS_WITH_LIMITATIONS). Checkpoint/bằng chứng được commit tài liệu riêng sau mã nguồn, không deploy docs-only. Tiếp tục trên cùng nhánh/worktree, không reset về nền19848cd hoặc commit runtime cũ. Không push/merge main hay Production; giữ local chuẩn bị công cụ.
+
+## Triển khai và kiểm chứng
+
 - Worktree `D:/khkt/.claude/worktrees/ui-ux-optimization-20261031`, nhánh `feat/ui-ux-optimization-20261031`; tiếp tục từ HEAD1183f40, không reset về19848cd. Giữ nguyên local chuẩn bị công cụ và các worktree cũ.
 - Yêu cầu cuối thay phương án cũ: cùng lưới nhóm/thẻ cho cả PC và điện thoại. PC≥1100px4cột, tablet3cột, mobile≤760px2cột; giữ số cột trước/sau chọn nhóm. 12nhóm từ API chuẩn; ô A thành Quay về xanh tại chính hàng/cột A, mọi ô khác là kết quả cùng lưới, đủ số nghề không phân trang theo số nhóm. Đếm thật, tìm/lọc/BackForward/Quay về đúng thứ tự; trạng thái fetch có generation guard.
 - Khám phá: thẻ thông tin tên/mô tả từ catalog thật, tên và nút chính **Cùng khám phá** mở popup đầy đủ; **Xem video** là liên kết phụ thẳng nghề/tab video. Không dùng thumbnail ở thẻ thông tin. Không đổi dữ liệu hoặc rút gọn popup: giữ nhóm/tên/mô tả/công việc/ngày điển hình/kỹ năng-lý do/môi trường-trách nhiệm/lộ trình/điều kiện-nguồn và các action cũ; chỉ thêm wrapper trình bày/accordion và liên kết video phụ.

@@ -1,0 +1,53 @@
+{
+  "status": "PASS",
+  "origin": "https://quocan4-49ctzu22h-khkt3.vercel.app",
+  "deployment": "dpl_GNUhqHX4puDgePYvaTJmptVBMCLt",
+  "source_sha": "13e65ed0bf17900d5ea2cbc914164833170346df",
+  "fixtures": false,
+  "physical_phone": false,
+  "checks": {
+    "320": {
+      "careers_stories_chat": "PASS",
+      "rapid_interactions": "PASS",
+      "reduced_motion": "PASS",
+      "no_overflow": "PASS",
+      "desktop_keyboard_hover_focus": "covered_local_touch_emulation"
+    },
+    "360": {
+      "careers_stories_chat": "PASS",
+      "rapid_interactions": "PASS",
+      "reduced_motion": "PASS",
+      "no_overflow": "PASS",
+      "desktop_keyboard_hover_focus": "covered_local_touch_emulation"
+    },
+    "390": {
+      "careers_stories_chat": "PASS",
+      "rapid_interactions": "PASS",
+      "reduced_motion": "PASS",
+      "no_overflow": "PASS",
+      "desktop_keyboard_hover_focus": "covered_local_touch_emulation"
+    },
+    "412": {
+      "careers_stories_chat": "PASS",
+      "rapid_interactions": "PASS",
+      "reduced_motion": "PASS",
+      "no_overflow": "PASS",
+      "desktop_keyboard_hover_focus": "covered_local_touch_emulation"
+    },
+    "1280": {
+      "careers_stories_chat": "PASS",
+      "rapid_interactions": "PASS",
+      "reduced_motion": "PASS",
+      "no_overflow": "PASS",
+      "desktop_keyboard_hover_focus": "PASS"
+    },
+    "1440": {
+      "careers_stories_chat": "PASS",
+      "rapid_interactions": "PASS",
+      "reduced_motion": "PASS",
+      "no_overflow": "PASS",
+      "desktop_keyboard_hover_focus": "PASS"
+    }
+  },
+  "js_errors": 0
+}

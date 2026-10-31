@@ -1,0 +1,65 @@
+{
+  "origin": "https://quocan4-49ctzu22h-khkt3.vercel.app",
+  "deployment": "dpl_GNUhqHX4puDgePYvaTJmptVBMCLt",
+  "source_sha": "13e65ed0bf17900d5ea2cbc914164833170346df",
+  "fixtures_used": false,
+  "physical_phone_tested": false,
+  "physical_microphone_tested": false,
+  "widths": {
+    "320": {
+      "careers_group_return_search_and_navigation": "PASS",
+      "stories_group_return_search_and_navigation": "PASS",
+      "real_member_draft_reload_no_overflow": "PASS"
+    },
+    "360": {
+      "careers_group_return_search_and_navigation": "PASS",
+      "stories_group_return_search_and_navigation": "PASS",
+      "real_member_draft_reload_no_overflow": "PASS"
+    },
+    "390": {
+      "careers_group_return_search_and_navigation": "PASS",
+      "stories_group_return_search_and_navigation": "PASS",
+      "real_member_draft_reload_no_overflow": "PASS"
+    },
+    "412": {
+      "careers_group_return_search_and_navigation": "PASS",
+      "stories_group_return_search_and_navigation": "PASS",
+      "real_member_draft_reload_no_overflow": "PASS"
+    },
+    "1280": {
+      "careers_group_return_search_and_navigation": "PASS",
+      "stories_group_return_search_and_navigation": "PASS",
+      "real_member_draft_reload_no_overflow": "PASS"
+    },
+    "1440": {
+      "careers_group_return_search_and_navigation": "PASS",
+      "stories_group_return_search_and_navigation": "PASS",
+      "real_member_draft_reload_no_overflow": "PASS"
+    }
+  },
+  "checks": {
+    "full_live_preview_configuration": true,
+    "real_catalog_200_and_canonical_groups": true,
+    "one_real_video_sample": {
+      "status": "PASS",
+      "video_id": "_WQ_VV4pXPc",
+      "time_start": 2.1841650972747804,
+      "time_end": 3.398061160217285
+    },
+    "inherited_live_member_answer_rendered_new_preview": {
+      "status": "PASS",
+      "characters": 3709,
+      "sources": 0
+    },
+    "real_answer_content_preserved": true,
+    "js_errors": 0,
+    "real_ui_type_send_and_reload": {
+      "status": "PASS",
+      "firebase_password_sdk": true,
+      "real_deepseek_pipeline": "task41",
+      "width": 390,
+      "fixture": false
+    }
+  },
+  "status": "PASS"
+}

@@ -1,0 +1,37 @@
+{
+  "status": "PASS_WITH_LIMITATIONS",
+  "origin": "https://quocan4-g6cyh2wi1-khkt3.vercel.app",
+  "source_sha": "bb469a2778beb038e7a39c7f89a9eff90a9cfc63",
+  "deployment": "dpl_EVzJzsAG9SZnV4Nx3omtUecyV5WY",
+  "fixtures_used_on_preview": false,
+  "current_preview": {
+    "catalog_200_careers_videos_and_12_groups": "PASS",
+    "interaction_six_widths": "PASS",
+    "retained_member_controls_visible": true,
+    "full_profiles_390_1440": "PASS"
+  },
+  "inherited_from_13e65ed": {
+    "deployment": "dpl_GNUhqHX4puDgePYvaTJmptVBMCLt",
+    "only_runtime_difference": "one scoped CSS rule keeps the existing chat controls visible",
+    "full_profiles_six_widths_18_cases": "PASS",
+    "real_ui_deepseek_task41_and_draft_reload": "PASS",
+    "real_answer_3709_characters_preserved": "PASS",
+    "one_video_playing_and_time_increasing": "PASS",
+    "remaining_199_videos_not_replayed": true
+  },
+  "guest_live": {
+    "status": "BLOCKED",
+    "http_status": 401,
+    "existing_qa_identity_only": true,
+    "quota_reset": false,
+    "replacement_guest_issued": false
+  },
+  "not_tested": [
+    "physical phones",
+    "physical microphone",
+    "physical soft keyboard",
+    "new Google popup"
+  ],
+  "production_changed": false,
+  "main_pushed_or_merged": false
+}
