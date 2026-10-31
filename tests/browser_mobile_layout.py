@@ -104,6 +104,7 @@ async def run(tab):
                 await b.click(f'{host} [data-mobile-group="{groups[2]["category_id"]}"]');await b.wait(f'document.querySelectorAll("{host} [data-mobile-career]").length>0');await b.shot(f'final-{kind}-selected-{width}.png')
             await b.call('Page.navigate',{'url':O+'/ai-career-advisor?conversation='+SID});await b.wait("document.querySelectorAll('.answer-more').length===1")
             assert await b.evaluate("document.querySelector('.assistant-identity h1').innerText==='La Bàn AI'&&document.querySelector('#mobile-account').getBoundingClientRect().width>=44")
+            assert await b.evaluate("(()=>{const keep=document.querySelector('#keep-conversation'),old=keep.hidden;keep.hidden=true;const visible=document.querySelector('#end-session').getClientRects().length>0;keep.hidden=old;return visible})()")
             await b.click('#open-sidebar')
             if width<=760:await b.click('#close-sidebar')
             else:assert await b.evaluate("document.activeElement.id==='history-search'")
@@ -135,6 +136,9 @@ async def run(tab):
             await b.evaluate("document.querySelector('#message-input').value='Gửi kiểm thử';document.querySelector('#message-input').dispatchEvent(new Event('input'));document.querySelector('#message-form').requestSubmit()")
             await b.wait("!document.querySelector('#thinking').hidden");assert await b.evaluate("document.querySelector('#send-message').disabled")
             await b.wait("document.querySelector('#messages').textContent.includes('Phản hồi ngắn dành riêng cho kiểm thử.')&&document.querySelector('#thinking').hidden");assert len(requests)==1;requests.clear();checks['send_simulation']=True
+            # Independent width cases must not advance the SAME survey six times.
+            # This storage belongs only to synthetic loopback fixtures, never real users/quota.
+            await b.evaluate("if(location.hostname==='127.0.0.1')sessionStorage.clear()")
             await b.call('Page.navigate',{'url':O+'/ai-career-advisor?conversation='+SURVEY});await b.wait("document.querySelector('#career-survey')?.hidden===false")
             await b.evaluate("document.querySelector('#survey-answer').value='Câu một tổng hợp';document.querySelector('#survey-answer').dispatchEvent(new Event('input'));document.querySelector('#survey-next').click();document.querySelector('#survey-answer').value='Nháp câu hai';document.querySelector('#survey-answer').dispatchEvent(new Event('input'))")
             await b.call('Page.navigate',{'url':O+'/mot-ngay-lam-viec'});await b.wait("document.querySelectorAll('[data-mobile-group]').length===12");await b.evaluate('history.back()');await b.wait("document.querySelector('#survey-answer')?.value==='Nháp câu hai'");await b.call('Page.reload');await b.wait("document.querySelector('#survey-answer')?.value==='Nháp câu hai'");checks['survey_navigation_back_reload']=True
@@ -154,6 +158,7 @@ async def run(tab):
             assert await b.evaluate("document.documentElement.scrollWidth<=innerWidth+1&&document.querySelector('#open-sidebar').getBoundingClientRect().height>=44&&document.querySelector('#mobile-account').getBoundingClientRect().height>=44")
         report['guest_quota_uses_api_fixture_values_six_widths']=True;GUEST_ROLE=False
         report['desktop_shared_grid_and_compact_header']=True
+        report['retained_member_controls_visible_six_widths']=True
         assert not b.errors;report['js_errors']=0;report['status']='PASS';save();print(json.dumps(report,ensure_ascii=True))
 def main():
     proc=subprocess.Popen(['C:/Program Files/Google/Chrome/Application/chrome.exe','--headless=new','--no-first-run','--no-proxy-server','--remote-debugging-port=9294','--remote-allow-origins=http://localhost:9294','--user-data-dir='+str(Path('C:/Users/Administrator/AppData/Local/Temp')/('laban-final-layout-'+str(time.time_ns()))),'about:blank'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,creationflags=subprocess.CREATE_NO_WINDOW)

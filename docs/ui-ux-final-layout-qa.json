@@ -94,8 +94,8 @@
   },
   "status": "PASS",
   "friendly_error_and_retry_same_request_id": true,
-  "guest_quota_uses_api_fixture_values_four_widths": true,
+  "guest_quota_uses_api_fixture_values_six_widths": true,
   "desktop_shared_grid_and_compact_header": true,
   "js_errors": 0,
-  "guest_quota_uses_api_fixture_values_six_widths": true
+  "retained_member_controls_visible_six_widths": true
 }
